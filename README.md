@@ -11,6 +11,8 @@ the PostgreSQL database using the following environment variables: -
 - `POSTGRESQL_HOST`
 - `POSTGRESQL_PORT`
 
-For deployment see our peer repository `docker-mysql-to-pg-migrator-ansible`
+For deployment see our peer [Ansible] repository.
 
 ---
+
+[ansible]: https://github.com/InformaticsMatters/docker-mysql-to-pg-migrator
