@@ -8,6 +8,7 @@
 # `POSTGRESQL_PASSWORD`
 # `POSTGRESQL_HOST`
 # `POSTGRESQL_PORT`
+# `POSTGRESQL_DATABASE`
 #
 # Process:
 # 1. Identify mysql export directory with: mysql> SHOW VARIABLES LIKE "secure_file_priv";
@@ -21,7 +22,7 @@
 
 CHARSET="utf-8" #your current database charset
 DATADIR="/import"
-DATABASE=mysql-test
+DATABASE=$POSTGRESQL_DATABASE
 PGPASSWORD=$POSTGRESQL_PASSWORD
 
 echo "Initial Checks"

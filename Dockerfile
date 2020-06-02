@@ -1,5 +1,5 @@
 ARG from_tag="13"
-FROM postgres:$frag_tag
+FROM postgres:$from_tag
 
 LABEL maintainer="achristie@informaticsmatters.com"
 
