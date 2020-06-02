@@ -21,7 +21,7 @@
 #
 
 CHARSET="utf-8" #your current database charset
-DATADIR="/import"
+DATADIR="/import/sql"
 DATABASE=$POSTGRESQL_DATABASE
 
 export PGPASSWORD=$POSTGRESQL_PASSWORD
