@@ -15,4 +15,4 @@ For deployment see our peer [Ansible] repository.
 
 ---
 
-[ansible]: https://github.com/InformaticsMatters/docker-mysql-to-pg-migrator
+[ansible]: https://github.com/InformaticsMatters/docker-mysql-to-pg-migrator-ansible
