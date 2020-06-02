@@ -10,6 +10,7 @@ the PostgreSQL database using the following environment variables: -
 - `POSTGRESQL_PASSWORD`
 - `POSTGRESQL_HOST`
 - `POSTGRESQL_PORT`
+- `POSTGRESQL_DATABASE`
 
 For deployment see our peer [Ansible] repository.
 
