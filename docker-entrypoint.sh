@@ -23,7 +23,8 @@
 CHARSET="utf-8" #your current database charset
 DATADIR="/import"
 DATABASE=$POSTGRESQL_DATABASE
-PGPASSWORD=$POSTGRESQL_PASSWORD
+
+export PGPASSWORD=$POSTGRESQL_PASSWORD
 
 echo "Initial Checks"
 
