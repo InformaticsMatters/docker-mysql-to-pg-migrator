@@ -37,6 +37,10 @@ if [ ! -d $DATADIR ]; then
     exit 1
 fi
 
+# tmp_tab does not exist in the new database - remove from the list of tables to load
+echo "tmp_tab does not exist in the new database - remove from the list of tables to load"
+mv $DATADIR/tmp_tab.txt $DATADIR/tmp_tab.rej
+
 echo "Initial Checks OK"
 
 #  Remove constraints if they exist.
