@@ -1,4 +1,6 @@
 -- Updates required for mysql to postgres migration before data load
+-- NB Following addition of missing tables
+-- 1. redo the drop constraint sql command (see README) and paste below.
 
  ALTER TABLE public.auth_group_permissions DROP CONSTRAINT IF EXISTS auth_group_permissio_permission_id_84c5c92e_fk_auth_perm;
  ALTER TABLE public.auth_group_permissions DROP CONSTRAINT IF EXISTS auth_group_permissions_group_id_b120cbf9_fk_auth_group_id;

@@ -1,4 +1,7 @@
 -- Updates required for mysql to postgres migration after data load
+-- NB Following addition of missing tables
+-- 1. search for XXX and uncomment.
+-- 2. redo the add constraint sql command (see README) and paste below.
 
 -- Recreate constraints
 
@@ -302,22 +305,22 @@ SELECT setval('viewer_compound_project_id_id_seq', (SELECT MAX(id) FROM viewer_c
 -- CREATE TABLE `viewer_compoundset` (
 --   `id` int(11) NOT NULL AUTO_INCREMENT,
 -- ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1; */
-SELECT setval('viewer_compoundset_id_seq', (SELECT MAX(id) FROM viewer_compoundset)); 
+-- XXX SELECT setval('viewer_compoundset_id_seq', (SELECT MAX(id) FROM viewer_compoundset));
 
 -- CREATE TABLE `viewer_compoundsetsubmitter` (
 --   `id` int(11) NOT NULL AUTO_INCREMENT,
 -- ) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1; */
-SELECT setval('viewer_compoundsetsubmitter_id_seq', (SELECT MAX(id) FROM viewer_compoundsetsubmitter)); 
+-- XXX SELECT setval('viewer_compoundsetsubmitter_id_seq', (SELECT MAX(id) FROM viewer_compoundsetsubmitter));
 
 -- CREATE TABLE `viewer_computedcompound` (
 --   `id` int(11) NOT NULL AUTO_INCREMENT,
 -- ) ENGINE=InnoDB AUTO_INCREMENT=1573 DEFAULT CHARSET=latin1; */
-SELECT setval('viewer_computedcompound_id_seq', (SELECT MAX(id) FROM viewer_computedcompound)); 
+-- XXX SELECT setval('viewer_computedcompound_id_seq', (SELECT MAX(id) FROM viewer_computedcompound));
 
 -- CREATE TABLE `viewer_computedcompound_inspiration_frags` (
 --   `id` int(11) NOT NULL AUTO_INCREMENT,
 -- ) ENGINE=InnoDB AUTO_INCREMENT=2527 DEFAULT CHARSET=latin1; */
-SELECT setval('viewer_computedcompound_inspiration_frags_id_seq', (SELECT MAX(id) FROM viewer_computedcompound_inspiration_frags)); 
+-- XXX SELECT setval('viewer_computedcompound_inspiration_frags_id_seq', (SELECT MAX(id) FROM viewer_computedcompound_inspiration_frags));
 
 -- CREATE TABLE `viewer_molecule` (
 --   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -327,13 +330,14 @@ SELECT setval('viewer_molecule_id_seq', (SELECT MAX(id) FROM viewer_molecule));
 -- CREATE TABLE `viewer_numericalscorevalues` (
 --   `id` int(11) NOT NULL AUTO_INCREMENT,
 -- ) ENGINE=InnoDB AUTO_INCREMENT=3405 DEFAULT CHARSET=latin1; */
-SELECT setval('viewer_numericalscorevalues_id_seq', (SELECT MAX(id) FROM viewer_numericalscorevalues)); 
+-- XXX SELECT setval('viewer_numericalscorevalues_id_seq', (SELECT MAX(id) FROM viewer_numericalscorevalues));
 
 -- CREATE TABLE `viewer_project` (
 --   `id` int(11) NOT NULL AUTO_INCREMENT,
 -- ) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=latin1; */
 SELECT setval('viewer_project_id_seq', (SELECT MAX(id) FROM viewer_project)); 
 
+--
 -- CREATE TABLE `viewer_project_user_id` (
 --   `id` int(11) NOT NULL AUTO_INCREMENT, */
 SELECT setval('viewer_project_user_id_id_seq', (SELECT MAX(id) FROM viewer_project_user_id)); 
@@ -346,17 +350,17 @@ SELECT setval('viewer_protein_id_seq', (SELECT MAX(id) FROM viewer_protein));
 -- CREATE TABLE `viewer_scoredescription` (
 --   `id` int(11) NOT NULL AUTO_INCREMENT,
 -- ) ENGINE=InnoDB AUTO_INCREMENT=205 DEFAULT CHARSET=latin1; */
-SELECT setval('viewer_scoredescription_id_seq', (SELECT MAX(id) FROM viewer_scoredescription)); 
+-- XXX SELECT setval('viewer_scoredescription_id_seq', (SELECT MAX(id) FROM viewer_scoredescription));
 
 -- CREATE TABLE `viewer_sessionproject` (
 --   `id` int(11) NOT NULL AUTO_INCREMENT,
 -- ) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=latin1; */
-SELECT setval('viewer_sessionproject_id_seq', (SELECT MAX(id) FROM viewer_sessionproject)); 
+--- XXX SELECT setval('viewer_sessionproject_id_seq', (SELECT MAX(id) FROM viewer_sessionproject));
 
 -- CREATE TABLE `viewer_snapshot` (
 --   `id` int(11) NOT NULL AUTO_INCREMENT,
 -- ) ENGINE=InnoDB AUTO_INCREMENT=68 DEFAULT CHARSET=latin1; */
-SELECT setval('viewer_snapshot_id_seq', (SELECT MAX(id) FROM viewer_snapshot)); 
+-- XXX SELECT setval('viewer_snapshot_id_seq', (SELECT MAX(id) FROM viewer_snapshot));
 
 -- CREATE TABLE `viewer_target` (
 --   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -371,5 +375,4 @@ SELECT setval('viewer_target_project_id_id_seq', (SELECT MAX(id) FROM viewer_tar
 -- CREATE TABLE `viewer_textscorevalues` (
 --   `id` int(11) NOT NULL AUTO_INCREMENT,
 -- ) ENGINE=InnoDB AUTO_INCREMENT=9627 DEFAULT CHARSET=latin1; */
-SELECT setval('viewer_textscorevalues_id_seq', (SELECT MAX(id) FROM viewer_textscorevalues)); 
-
+-- XXX SELECT setval('viewer_textscorevalues_id_seq', (SELECT MAX(id) FROM viewer_textscorevalues));
