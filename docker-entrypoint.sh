@@ -21,8 +21,8 @@
 #
 
 CHARSET="utf-8" #your current database charset
-DATADIR="/import/sql"
-#DATADIR="/home/duncan/Documents/dev/InfoMat/MySQLdatabasemigration/script/sql"
+#DATADIR="/import/sql"
+DATADIR="/home/duncan/Documents/dev/InfoMat/MySQLdatabasemigration/script/sql"
 DATABASE=$POSTGRESQL_DATABASE
 
 export PGPASSWORD=$POSTGRESQL_PASSWORD
@@ -40,6 +40,20 @@ fi
 # tmp_tab does not exist in the new database - remove from the list of tables to load
 echo "tmp_tab does not exist in the new database - remove from the list of tables to load"
 mv $DATADIR/tmp_tab.txt $DATADIR/tmp_tab.rej
+
+# The following tables do not exist yet in the new database - remove from the list of tables to load
+echo "Move tables that do not exist yet in the new database - XX REVISIT and RECHECK constraints when available"
+mv $DATADIR/viewer_compoundset.txt $DATADIR/viewer_compoundset.rej
+mv $DATADIR/viewer_compoundsetsubmitter.txt $DATADIR/viewer_compoundsetsubmitter.rej
+mv $DATADIR/viewer_computedcompound.txt $DATADIR/viewer_computedcompound.rej
+mv $DATADIR/viewer_computedcompound_inspiration_frags.txt $DATADIR/viewer_computedcompound_inspiration_frags.rej
+mv $DATADIR/viewer_csetkeys.txt $DATADIR/viewer_csetkeys.rej
+mv $DATADIR/viewer_numericalscorevalues.txt $DATADIR/viewer_numericalscorevalues.rej
+mv $DATADIR/viewer_scoredescription.txt $DATADIR/viewer_scoredescription.rej
+mv $DATADIR/viewer_sessionproject.txt $DATADIR/viewer_sessionproject.rej
+mv $DATADIR/viewer_snapshot.txt $DATADIR/viewer_snapshot.rej
+mv $DATADIR/viewer_textscorevalues.txt $DATADIR/viewer_textscorevalues.rej
+
 
 echo "Initial Checks OK"
 
