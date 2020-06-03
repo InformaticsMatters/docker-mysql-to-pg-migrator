@@ -21,8 +21,8 @@
 #
 
 CHARSET="utf-8" #your current database charset
-#DATADIR="/import/sql"
-DATADIR="/home/duncan/Documents/dev/InfoMat/MySQLdatabasemigration/script/sql"
+DATADIR="/import/sql"
+#DATADIR="/home/duncan/Documents/dev/InfoMat/MySQLdatabasemigration/script/sql"
 DATABASE=$POSTGRESQL_DATABASE
 
 export PGPASSWORD=$POSTGRESQL_PASSWORD
