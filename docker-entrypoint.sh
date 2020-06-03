@@ -21,7 +21,8 @@
 #
 
 CHARSET="utf-8" #your current database charset
-DATADIR="/import/sql"
+#DATADIR="/import/sql"
+DATADIR="/home/duncan/Documents/dev/InfoMat/MySQLdatabasemigration/script/sql"
 DATABASE=$POSTGRESQL_DATABASE
 
 export PGPASSWORD=$POSTGRESQL_PASSWORD
@@ -37,9 +38,34 @@ if [ ! -d $DATADIR ]; then
 fi
 
 echo "Initial Checks OK"
+
+#  Remove constraints if they exist.
+
+echo "Adjust Tables (incl. sequence information)"
+
+psql \
+    -X \
+    -U $POSTGRESQL_USER \
+    -h $POSTGRESQL_HOST \
+    -p $POSTGRESQL_PORT \
+    -f database-adjustments-pre.sql \
+    --echo-all \
+    --set AUTOCOMMIT=on \
+    --set ON_ERROR_STOP=on \
+    $DATABASE
+
+if [ $? -ne 0 ]; then
+    echo "Pre-load adjustments failed, fault:" 1>&2
+    exit $?
+fi
+
 echo "Loading Tables Starting"
 
 for file in $DATADIR/*.txt; do
+
+    read lines filename <<< $(wc -l $file)
+    echo "lines=$lines filename=$filename"
+
     TMP=${file%.*}
     TABLE=${TMP##*/}
     echo "preparing $TABLE"
@@ -103,13 +129,13 @@ psql \
     -U $POSTGRESQL_USER \
     -h $POSTGRESQL_HOST \
     -p $POSTGRESQL_PORT \
-    -f database-adjustments.sql \
+    -f database-adjustments-post.sql \
     --echo-all \
     --set AUTOCOMMIT=on \
     --set ON_ERROR_STOP=on \
     $DATABASE
 
 if [ $? -ne 0 ]; then
-    echo "Adjustments failed, fault:" 1>&2
+    echo "Post load Adjustments failed, fault:" 1>&2
     exit $?
 fi
