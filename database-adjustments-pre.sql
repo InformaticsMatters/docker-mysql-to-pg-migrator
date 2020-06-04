@@ -1,6 +1,4 @@
 -- Updates required for mysql to postgres migration before data load
--- NB Following addition of missing tables
--- 1. redo the drop constraint sql command (see README) and paste below.
 
  ALTER TABLE public.auth_group_permissions DROP CONSTRAINT IF EXISTS auth_group_permissio_permission_id_84c5c92e_fk_auth_perm;
  ALTER TABLE public.auth_group_permissions DROP CONSTRAINT IF EXISTS auth_group_permissions_group_id_b120cbf9_fk_auth_group_id;
@@ -43,19 +41,35 @@
  ALTER TABLE public.scoring_scorechoice DROP CONSTRAINT IF EXISTS scoring_scorechoice_mol_id_id_dd2ad6a7_fk_viewer_molecule_id;
  ALTER TABLE public.scoring_scorechoice DROP CONSTRAINT IF EXISTS scoring_scorechoice_prot_id_id_4aefe905_fk_viewer_protein_id;
  ALTER TABLE public.scoring_scorechoice DROP CONSTRAINT IF EXISTS scoring_scorechoice_user_id_id_7dcda6d5_fk_auth_user_id;
+ ALTER TABLE public.scoring_viewscene DROP CONSTRAINT IF EXISTS scoring_viewscene_snapshot_id_85cca17c_fk_viewer_snapshot_id;
  ALTER TABLE public.scoring_viewscene DROP CONSTRAINT IF EXISTS scoring_viewscene_user_id_id_60d60647_fk_auth_user_id;
  ALTER TABLE public.viewer_activitypoint DROP CONSTRAINT IF EXISTS viewer_activitypoint_cmpd_id_id_203ed5b1_fk_viewer_compound_id;
  ALTER TABLE public.viewer_activitypoint DROP CONSTRAINT IF EXISTS viewer_activitypoint_target_id_id_05cb6b4c_fk_viewer_target_id;
  ALTER TABLE public.viewer_compound_project_id DROP CONSTRAINT IF EXISTS viewer_compound_proj_compound_id_1d7463b1_fk_viewer_co;
  ALTER TABLE public.viewer_compound_project_id DROP CONSTRAINT IF EXISTS viewer_compound_proj_project_id_dd92baa4_fk_viewer_pr;
+ ALTER TABLE public.viewer_compoundset DROP CONSTRAINT IF EXISTS viewer_compoundset_submitter_id_2b302839_fk_viewer_co;
+ ALTER TABLE public.viewer_compoundset DROP CONSTRAINT IF EXISTS viewer_compoundset_target_id_afa3af57_fk_viewer_target_id;
+ ALTER TABLE public.viewer_computedcompound DROP CONSTRAINT IF EXISTS viewer_computedcompo_compound_set_id_5123546b_fk_viewer_co;
+ ALTER TABLE public.viewer_computedcompound_inspiration_frags DROP CONSTRAINT IF EXISTS viewer_computedcompo_computedcompound_id_6b9961cd_fk_viewer_co;
+ ALTER TABLE public.viewer_computedcompound_inspiration_frags DROP CONSTRAINT IF EXISTS viewer_computedcompo_molecule_id_78572d32_fk_viewer_mo;
  ALTER TABLE public.viewer_molecule DROP CONSTRAINT IF EXISTS viewer_molecule_cmpd_id_id_778fdcd7_fk_viewer_compound_id;
  ALTER TABLE public.viewer_molecule DROP CONSTRAINT IF EXISTS viewer_molecule_prot_id_id_26e598bd_fk_viewer_protein_id;
+ ALTER TABLE public.viewer_numericalscorevalues DROP CONSTRAINT IF EXISTS viewer_numericalscor_compound_id_2b2593f3_fk_viewer_co;
+ ALTER TABLE public.viewer_numericalscorevalues DROP CONSTRAINT IF EXISTS viewer_numericalscor_score_id_76ebd5a3_fk_viewer_sc;
  ALTER TABLE public.viewer_project_user_id DROP CONSTRAINT IF EXISTS viewer_project_user_id_project_id_0aa86214_fk_viewer_project_id;
  ALTER TABLE public.viewer_project_user_id DROP CONSTRAINT IF EXISTS viewer_project_user_id_user_id_7aab4886_fk_auth_user_id;
  ALTER TABLE public.viewer_protein DROP CONSTRAINT IF EXISTS viewer_protein_aligned_to_id_f7f93935_fk_viewer_protein_id;
  ALTER TABLE public.viewer_protein DROP CONSTRAINT IF EXISTS viewer_protein_target_id_id_6a7638f2_fk_viewer_target_id;
+ ALTER TABLE public.viewer_scoredescription DROP CONSTRAINT IF EXISTS viewer_scoredescript_compound_set_id_b62d9e8c_fk_viewer_co;
+ ALTER TABLE public.viewer_sessionproject DROP CONSTRAINT IF EXISTS viewer_sessionproject_author_id_4b6107e9_fk_auth_user_id;
+ ALTER TABLE public.viewer_sessionproject DROP CONSTRAINT IF EXISTS viewer_sessionproject_target_id_3ebe59c3_fk_viewer_target_id;
+ ALTER TABLE public.viewer_snapshot DROP CONSTRAINT IF EXISTS viewer_snapshot_author_id_45d36aa9_fk_auth_user_id;
+ ALTER TABLE public.viewer_snapshot DROP CONSTRAINT IF EXISTS viewer_snapshot_parent_id_c24cc496_fk_viewer_snapshot_id;
+ ALTER TABLE public.viewer_snapshot DROP CONSTRAINT IF EXISTS viewer_snapshot_session_project_id_c011636f_fk_viewer_se;
  ALTER TABLE public.viewer_target_project_id DROP CONSTRAINT IF EXISTS viewer_target_projec_project_id_8a755b32_fk_viewer_pr;
  ALTER TABLE public.viewer_target_project_id DROP CONSTRAINT IF EXISTS viewer_target_project_id_target_id_99796dcd_fk_viewer_target_id;
+ ALTER TABLE public.viewer_textscorevalues DROP CONSTRAINT IF EXISTS viewer_textscorevalu_compound_id_ecb14f5a_fk_viewer_co;
+ ALTER TABLE public.viewer_textscorevalues DROP CONSTRAINT IF EXISTS viewer_textscorevalu_score_id_ca3a1d85_fk_viewer_sc;
  ALTER TABLE public.django_admin_log DROP CONSTRAINT IF EXISTS django_admin_log_action_flag_check;
  ALTER TABLE public.auth_group DROP CONSTRAINT IF EXISTS auth_group_pkey;
  ALTER TABLE public.auth_group_permissions DROP CONSTRAINT IF EXISTS auth_group_permissions_pkey;
@@ -90,12 +104,22 @@
  ALTER TABLE public.viewer_activitypoint DROP CONSTRAINT IF EXISTS viewer_activitypoint_pkey;
  ALTER TABLE public.viewer_compound DROP CONSTRAINT IF EXISTS viewer_compound_pkey;
  ALTER TABLE public.viewer_compound_project_id DROP CONSTRAINT IF EXISTS viewer_compound_project_id_pkey;
+ ALTER TABLE public.viewer_compoundset DROP CONSTRAINT IF EXISTS viewer_compoundset_pkey;
+ ALTER TABLE public.viewer_compoundsetsubmitter DROP CONSTRAINT IF EXISTS viewer_compoundsetsubmitter_pkey;
+ ALTER TABLE public.viewer_computedcompound DROP CONSTRAINT IF EXISTS viewer_computedcompound_pkey;
+ ALTER TABLE public.viewer_computedcompound_inspiration_frags DROP CONSTRAINT IF EXISTS viewer_computedcompound_inspiration_frags_pkey;
+ ALTER TABLE public.viewer_csetkeys DROP CONSTRAINT IF EXISTS viewer_csetkeys_pkey;
  ALTER TABLE public.viewer_molecule DROP CONSTRAINT IF EXISTS viewer_molecule_pkey;
+ ALTER TABLE public.viewer_numericalscorevalues DROP CONSTRAINT IF EXISTS viewer_numericalscorevalues_pkey;
  ALTER TABLE public.viewer_project DROP CONSTRAINT IF EXISTS viewer_project_pkey;
  ALTER TABLE public.viewer_project_user_id DROP CONSTRAINT IF EXISTS viewer_project_user_id_pkey;
  ALTER TABLE public.viewer_protein DROP CONSTRAINT IF EXISTS viewer_protein_pkey;
+ ALTER TABLE public.viewer_scoredescription DROP CONSTRAINT IF EXISTS viewer_scoredescription_pkey;
+ ALTER TABLE public.viewer_sessionproject DROP CONSTRAINT IF EXISTS viewer_sessionproject_pkey;
+ ALTER TABLE public.viewer_snapshot DROP CONSTRAINT IF EXISTS viewer_snapshot_pkey;
  ALTER TABLE public.viewer_target DROP CONSTRAINT IF EXISTS viewer_target_pkey;
  ALTER TABLE public.viewer_target_project_id DROP CONSTRAINT IF EXISTS viewer_target_project_id_pkey;
+ ALTER TABLE public.viewer_textscorevalues DROP CONSTRAINT IF EXISTS viewer_textscorevalues_pkey;
  ALTER TABLE public.auth_group DROP CONSTRAINT IF EXISTS auth_group_name_key;
  ALTER TABLE public.auth_group_permissions DROP CONSTRAINT IF EXISTS auth_group_permissions_group_id_permission_id_0cd325b0_uniq;
  ALTER TABLE public.auth_permission DROP CONSTRAINT IF EXISTS auth_permission_content_type_id_codename_01ab375a_uniq;
@@ -124,9 +148,13 @@
  ALTER TABLE public.viewer_activitypoint DROP CONSTRAINT IF EXISTS viewer_activitypoint_target_id_id_activity_cm_11d84f70_uniq;
  ALTER TABLE public.viewer_compound DROP CONSTRAINT IF EXISTS viewer_compound_inchi_key;
  ALTER TABLE public.viewer_compound_project_id DROP CONSTRAINT IF EXISTS viewer_compound_project_id_compound_id_project_id_14bf5e78_uniq;
+ ALTER TABLE public.viewer_compoundset DROP CONSTRAINT IF EXISTS viewer_compoundset_name_key;
+ ALTER TABLE public.viewer_compoundsetsubmitter DROP CONSTRAINT IF EXISTS viewer_compoundsetsubmitter_name_method_435d0b75_uniq;
+ ALTER TABLE public.viewer_computedcompound_inspiration_frags DROP CONSTRAINT IF EXISTS viewer_computedcompound__computedcompound_id_mole_1ac44b85_uniq;
  ALTER TABLE public.viewer_molecule DROP CONSTRAINT IF EXISTS viewer_molecule_prot_id_id_cmpd_id_id_mol_type_6e3feda6_uniq;
  ALTER TABLE public.viewer_project DROP CONSTRAINT IF EXISTS viewer_project_title_key;
  ALTER TABLE public.viewer_project_user_id DROP CONSTRAINT IF EXISTS viewer_project_user_id_project_id_user_id_354ac1c0_uniq;
  ALTER TABLE public.viewer_protein DROP CONSTRAINT IF EXISTS viewer_protein_code_prot_type_e0518d8d_uniq;
  ALTER TABLE public.viewer_target DROP CONSTRAINT IF EXISTS viewer_target_title_key;
  ALTER TABLE public.viewer_target_project_id DROP CONSTRAINT IF EXISTS viewer_target_project_id_target_id_project_id_6975d14f_uniq;
+

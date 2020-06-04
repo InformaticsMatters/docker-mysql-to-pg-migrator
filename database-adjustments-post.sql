@@ -1,7 +1,4 @@
 -- Updates required for mysql to postgres migration after data load
--- NB Following addition of missing tables
--- 1. search for XXX and uncomment.
--- 2. redo the add constraint sql command (see README) and paste below.
 
 -- Recreate constraints
 
@@ -11,6 +8,9 @@
  ALTER TABLE public.viewer_project_user_id ADD CONSTRAINT viewer_project_user_id_project_id_user_id_354ac1c0_uniq UNIQUE (project_id, user_id);
  ALTER TABLE public.viewer_project ADD CONSTRAINT viewer_project_title_key UNIQUE (title);
  ALTER TABLE public.viewer_molecule ADD CONSTRAINT viewer_molecule_prot_id_id_cmpd_id_id_mol_type_6e3feda6_uniq UNIQUE (prot_id_id, cmpd_id_id, mol_type);
+ ALTER TABLE public.viewer_computedcompound_inspiration_frags ADD CONSTRAINT viewer_computedcompound__computedcompound_id_mole_1ac44b85_uniq UNIQUE (computedcompound_id, molecule_id);
+ ALTER TABLE public.viewer_compoundsetsubmitter ADD CONSTRAINT viewer_compoundsetsubmitter_name_method_435d0b75_uniq UNIQUE (name, method);
+ ALTER TABLE public.viewer_compoundset ADD CONSTRAINT viewer_compoundset_name_key UNIQUE (name);
  ALTER TABLE public.viewer_compound_project_id ADD CONSTRAINT viewer_compound_project_id_compound_id_project_id_14bf5e78_uniq UNIQUE (compound_id, project_id);
  ALTER TABLE public.viewer_compound ADD CONSTRAINT viewer_compound_inchi_key UNIQUE (inchi);
  ALTER TABLE public.viewer_activitypoint ADD CONSTRAINT viewer_activitypoint_target_id_id_activity_cm_11d84f70_uniq UNIQUE (target_id_id, activity, cmpd_id_id, units);
@@ -39,12 +39,22 @@
  ALTER TABLE public.auth_permission ADD CONSTRAINT auth_permission_content_type_id_codename_01ab375a_uniq UNIQUE (content_type_id, codename);
  ALTER TABLE public.auth_group_permissions ADD CONSTRAINT auth_group_permissions_group_id_permission_id_0cd325b0_uniq UNIQUE (group_id, permission_id);
  ALTER TABLE public.auth_group ADD CONSTRAINT auth_group_name_key UNIQUE (name);
+ ALTER TABLE public.viewer_textscorevalues ADD CONSTRAINT viewer_textscorevalues_pkey PRIMARY KEY (id);
  ALTER TABLE public.viewer_target_project_id ADD CONSTRAINT viewer_target_project_id_pkey PRIMARY KEY (id);
  ALTER TABLE public.viewer_target ADD CONSTRAINT viewer_target_pkey PRIMARY KEY (id);
+ ALTER TABLE public.viewer_snapshot ADD CONSTRAINT viewer_snapshot_pkey PRIMARY KEY (id);
+ ALTER TABLE public.viewer_sessionproject ADD CONSTRAINT viewer_sessionproject_pkey PRIMARY KEY (id);
+ ALTER TABLE public.viewer_scoredescription ADD CONSTRAINT viewer_scoredescription_pkey PRIMARY KEY (id);
  ALTER TABLE public.viewer_protein ADD CONSTRAINT viewer_protein_pkey PRIMARY KEY (id);
  ALTER TABLE public.viewer_project_user_id ADD CONSTRAINT viewer_project_user_id_pkey PRIMARY KEY (id);
  ALTER TABLE public.viewer_project ADD CONSTRAINT viewer_project_pkey PRIMARY KEY (id);
+ ALTER TABLE public.viewer_numericalscorevalues ADD CONSTRAINT viewer_numericalscorevalues_pkey PRIMARY KEY (id);
  ALTER TABLE public.viewer_molecule ADD CONSTRAINT viewer_molecule_pkey PRIMARY KEY (id);
+ ALTER TABLE public.viewer_csetkeys ADD CONSTRAINT viewer_csetkeys_pkey PRIMARY KEY (uuid);
+ ALTER TABLE public.viewer_computedcompound_inspiration_frags ADD CONSTRAINT viewer_computedcompound_inspiration_frags_pkey PRIMARY KEY (id);
+ ALTER TABLE public.viewer_computedcompound ADD CONSTRAINT viewer_computedcompound_pkey PRIMARY KEY (id);
+ ALTER TABLE public.viewer_compoundsetsubmitter ADD CONSTRAINT viewer_compoundsetsubmitter_pkey PRIMARY KEY (id);
+ ALTER TABLE public.viewer_compoundset ADD CONSTRAINT viewer_compoundset_pkey PRIMARY KEY (id);
  ALTER TABLE public.viewer_compound_project_id ADD CONSTRAINT viewer_compound_project_id_pkey PRIMARY KEY (id);
  ALTER TABLE public.viewer_compound ADD CONSTRAINT viewer_compound_pkey PRIMARY KEY (id);
  ALTER TABLE public.viewer_activitypoint ADD CONSTRAINT viewer_activitypoint_pkey PRIMARY KEY (id);
@@ -79,19 +89,35 @@
  ALTER TABLE public.auth_group_permissions ADD CONSTRAINT auth_group_permissions_pkey PRIMARY KEY (id);
  ALTER TABLE public.auth_group ADD CONSTRAINT auth_group_pkey PRIMARY KEY (id);
  ALTER TABLE public.django_admin_log ADD CONSTRAINT django_admin_log_action_flag_check CHECK ((action_flag >= 0));
+ ALTER TABLE public.viewer_textscorevalues ADD CONSTRAINT viewer_textscorevalu_score_id_ca3a1d85_fk_viewer_sc FOREIGN KEY (score_id) REFERENCES viewer_scoredescription(id) DEFERRABLE INITIALLY DEFERRED;
+ ALTER TABLE public.viewer_textscorevalues ADD CONSTRAINT viewer_textscorevalu_compound_id_ecb14f5a_fk_viewer_co FOREIGN KEY (compound_id) REFERENCES viewer_computedcompound(id) DEFERRABLE INITIALLY DEFERRED;
  ALTER TABLE public.viewer_target_project_id ADD CONSTRAINT viewer_target_project_id_target_id_99796dcd_fk_viewer_target_id FOREIGN KEY (target_id) REFERENCES viewer_target(id) DEFERRABLE INITIALLY DEFERRED;
  ALTER TABLE public.viewer_target_project_id ADD CONSTRAINT viewer_target_projec_project_id_8a755b32_fk_viewer_pr FOREIGN KEY (project_id) REFERENCES viewer_project(id) DEFERRABLE INITIALLY DEFERRED;
+ ALTER TABLE public.viewer_snapshot ADD CONSTRAINT viewer_snapshot_session_project_id_c011636f_fk_viewer_se FOREIGN KEY (session_project_id) REFERENCES viewer_sessionproject(id) DEFERRABLE INITIALLY DEFERRED;
+ ALTER TABLE public.viewer_snapshot ADD CONSTRAINT viewer_snapshot_parent_id_c24cc496_fk_viewer_snapshot_id FOREIGN KEY (parent_id) REFERENCES viewer_snapshot(id) DEFERRABLE INITIALLY DEFERRED;
+ ALTER TABLE public.viewer_snapshot ADD CONSTRAINT viewer_snapshot_author_id_45d36aa9_fk_auth_user_id FOREIGN KEY (author_id) REFERENCES auth_user(id) DEFERRABLE INITIALLY DEFERRED;
+ ALTER TABLE public.viewer_sessionproject ADD CONSTRAINT viewer_sessionproject_target_id_3ebe59c3_fk_viewer_target_id FOREIGN KEY (target_id) REFERENCES viewer_target(id) DEFERRABLE INITIALLY DEFERRED;
+ ALTER TABLE public.viewer_sessionproject ADD CONSTRAINT viewer_sessionproject_author_id_4b6107e9_fk_auth_user_id FOREIGN KEY (author_id) REFERENCES auth_user(id) DEFERRABLE INITIALLY DEFERRED;
+ ALTER TABLE public.viewer_scoredescription ADD CONSTRAINT viewer_scoredescript_compound_set_id_b62d9e8c_fk_viewer_co FOREIGN KEY (compound_set_id) REFERENCES viewer_compoundset(id) DEFERRABLE INITIALLY DEFERRED;
  ALTER TABLE public.viewer_protein ADD CONSTRAINT viewer_protein_target_id_id_6a7638f2_fk_viewer_target_id FOREIGN KEY (target_id_id) REFERENCES viewer_target(id) DEFERRABLE INITIALLY DEFERRED;
  ALTER TABLE public.viewer_protein ADD CONSTRAINT viewer_protein_aligned_to_id_f7f93935_fk_viewer_protein_id FOREIGN KEY (aligned_to_id) REFERENCES viewer_protein(id) DEFERRABLE INITIALLY DEFERRED;
  ALTER TABLE public.viewer_project_user_id ADD CONSTRAINT viewer_project_user_id_user_id_7aab4886_fk_auth_user_id FOREIGN KEY (user_id) REFERENCES auth_user(id) DEFERRABLE INITIALLY DEFERRED;
  ALTER TABLE public.viewer_project_user_id ADD CONSTRAINT viewer_project_user_id_project_id_0aa86214_fk_viewer_project_id FOREIGN KEY (project_id) REFERENCES viewer_project(id) DEFERRABLE INITIALLY DEFERRED;
+ ALTER TABLE public.viewer_numericalscorevalues ADD CONSTRAINT viewer_numericalscor_score_id_76ebd5a3_fk_viewer_sc FOREIGN KEY (score_id) REFERENCES viewer_scoredescription(id) DEFERRABLE INITIALLY DEFERRED;
+ ALTER TABLE public.viewer_numericalscorevalues ADD CONSTRAINT viewer_numericalscor_compound_id_2b2593f3_fk_viewer_co FOREIGN KEY (compound_id) REFERENCES viewer_computedcompound(id) DEFERRABLE INITIALLY DEFERRED;
  ALTER TABLE public.viewer_molecule ADD CONSTRAINT viewer_molecule_prot_id_id_26e598bd_fk_viewer_protein_id FOREIGN KEY (prot_id_id) REFERENCES viewer_protein(id) DEFERRABLE INITIALLY DEFERRED;
  ALTER TABLE public.viewer_molecule ADD CONSTRAINT viewer_molecule_cmpd_id_id_778fdcd7_fk_viewer_compound_id FOREIGN KEY (cmpd_id_id) REFERENCES viewer_compound(id) DEFERRABLE INITIALLY DEFERRED;
+ ALTER TABLE public.viewer_computedcompound_inspiration_frags ADD CONSTRAINT viewer_computedcompo_molecule_id_78572d32_fk_viewer_mo FOREIGN KEY (molecule_id) REFERENCES viewer_molecule(id) DEFERRABLE INITIALLY DEFERRED;
+ ALTER TABLE public.viewer_computedcompound_inspiration_frags ADD CONSTRAINT viewer_computedcompo_computedcompound_id_6b9961cd_fk_viewer_co FOREIGN KEY (computedcompound_id) REFERENCES viewer_computedcompound(id) DEFERRABLE INITIALLY DEFERRED;
+ ALTER TABLE public.viewer_computedcompound ADD CONSTRAINT viewer_computedcompo_compound_set_id_5123546b_fk_viewer_co FOREIGN KEY (compound_set_id) REFERENCES viewer_compoundset(id) DEFERRABLE INITIALLY DEFERRED;
+ ALTER TABLE public.viewer_compoundset ADD CONSTRAINT viewer_compoundset_target_id_afa3af57_fk_viewer_target_id FOREIGN KEY (target_id) REFERENCES viewer_target(id) DEFERRABLE INITIALLY DEFERRED;
+ ALTER TABLE public.viewer_compoundset ADD CONSTRAINT viewer_compoundset_submitter_id_2b302839_fk_viewer_co FOREIGN KEY (submitter_id) REFERENCES viewer_compoundsetsubmitter(id) DEFERRABLE INITIALLY DEFERRED;
  ALTER TABLE public.viewer_compound_project_id ADD CONSTRAINT viewer_compound_proj_project_id_dd92baa4_fk_viewer_pr FOREIGN KEY (project_id) REFERENCES viewer_project(id) DEFERRABLE INITIALLY DEFERRED;
  ALTER TABLE public.viewer_compound_project_id ADD CONSTRAINT viewer_compound_proj_compound_id_1d7463b1_fk_viewer_co FOREIGN KEY (compound_id) REFERENCES viewer_compound(id) DEFERRABLE INITIALLY DEFERRED;
  ALTER TABLE public.viewer_activitypoint ADD CONSTRAINT viewer_activitypoint_target_id_id_05cb6b4c_fk_viewer_target_id FOREIGN KEY (target_id_id) REFERENCES viewer_target(id) DEFERRABLE INITIALLY DEFERRED;
  ALTER TABLE public.viewer_activitypoint ADD CONSTRAINT viewer_activitypoint_cmpd_id_id_203ed5b1_fk_viewer_compound_id FOREIGN KEY (cmpd_id_id) REFERENCES viewer_compound(id) DEFERRABLE INITIALLY DEFERRED;
  ALTER TABLE public.scoring_viewscene ADD CONSTRAINT scoring_viewscene_user_id_id_60d60647_fk_auth_user_id FOREIGN KEY (user_id_id) REFERENCES auth_user(id) DEFERRABLE INITIALLY DEFERRED;
+ ALTER TABLE public.scoring_viewscene ADD CONSTRAINT scoring_viewscene_snapshot_id_85cca17c_fk_viewer_snapshot_id FOREIGN KEY (snapshot_id) REFERENCES viewer_snapshot(id) DEFERRABLE INITIALLY DEFERRED;
  ALTER TABLE public.scoring_scorechoice ADD CONSTRAINT scoring_scorechoice_user_id_id_7dcda6d5_fk_auth_user_id FOREIGN KEY (user_id_id) REFERENCES auth_user(id) DEFERRABLE INITIALLY DEFERRED;
  ALTER TABLE public.scoring_scorechoice ADD CONSTRAINT scoring_scorechoice_prot_id_id_4aefe905_fk_viewer_protein_id FOREIGN KEY (prot_id_id) REFERENCES viewer_protein(id) DEFERRABLE INITIALLY DEFERRED;
  ALTER TABLE public.scoring_scorechoice ADD CONSTRAINT scoring_scorechoice_mol_id_id_dd2ad6a7_fk_viewer_molecule_id FOREIGN KEY (mol_id_id) REFERENCES viewer_molecule(id) DEFERRABLE INITIALLY DEFERRED;
@@ -145,7 +171,6 @@ SELECT setval('auth_group_id_seq', (SELECT MAX(id) FROM auth_group));
 --  `id` int(11) NOT NULL AUTO_INCREMENT,
 SELECT setval('auth_group_permissions_id_seq', (SELECT MAX(id) FROM auth_group_permissions)); 
 
---
 -- CREATE TABLE `auth_permission` (
 --  `id` int(11) NOT NULL AUTO_INCREMENT,
 --
@@ -263,7 +288,7 @@ SELECT setval('scoring_molannotation_id_seq', (SELECT MAX(id) FROM scoring_molan
 
 -- CREATE TABLE `scoring_molchoice` (
 --   `id` int(11) NOT NULL AUTO_INCREMENT, */
--- SELECT setval('scoring_molchoice_id_seq', (SELECT MAX(id) FROM scoring_molchoice));
+SELECT setval('scoring_molchoice_id_seq', (SELECT MAX(id) FROM scoring_molchoice));
 
 -- CREATE TABLE `scoring_molgroup` (
 --   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -305,22 +330,22 @@ SELECT setval('viewer_compound_project_id_id_seq', (SELECT MAX(id) FROM viewer_c
 -- CREATE TABLE `viewer_compoundset` (
 --   `id` int(11) NOT NULL AUTO_INCREMENT,
 -- ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1; */
--- XXX SELECT setval('viewer_compoundset_id_seq', (SELECT MAX(id) FROM viewer_compoundset));
+SELECT setval('viewer_compoundset_id_seq', (SELECT MAX(id) FROM viewer_compoundset));
 
 -- CREATE TABLE `viewer_compoundsetsubmitter` (
 --   `id` int(11) NOT NULL AUTO_INCREMENT,
 -- ) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1; */
--- XXX SELECT setval('viewer_compoundsetsubmitter_id_seq', (SELECT MAX(id) FROM viewer_compoundsetsubmitter));
+SELECT setval('viewer_compoundsetsubmitter_id_seq', (SELECT MAX(id) FROM viewer_compoundsetsubmitter));
 
 -- CREATE TABLE `viewer_computedcompound` (
 --   `id` int(11) NOT NULL AUTO_INCREMENT,
 -- ) ENGINE=InnoDB AUTO_INCREMENT=1573 DEFAULT CHARSET=latin1; */
--- XXX SELECT setval('viewer_computedcompound_id_seq', (SELECT MAX(id) FROM viewer_computedcompound));
+SELECT setval('viewer_computedcompound_id_seq', (SELECT MAX(id) FROM viewer_computedcompound));
 
 -- CREATE TABLE `viewer_computedcompound_inspiration_frags` (
 --   `id` int(11) NOT NULL AUTO_INCREMENT,
 -- ) ENGINE=InnoDB AUTO_INCREMENT=2527 DEFAULT CHARSET=latin1; */
--- XXX SELECT setval('viewer_computedcompound_inspiration_frags_id_seq', (SELECT MAX(id) FROM viewer_computedcompound_inspiration_frags));
+SELECT setval('viewer_computedcompound_inspiration_frags_id_seq', (SELECT MAX(id) FROM viewer_computedcompound_inspiration_frags));
 
 -- CREATE TABLE `viewer_molecule` (
 --   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -330,7 +355,7 @@ SELECT setval('viewer_molecule_id_seq', (SELECT MAX(id) FROM viewer_molecule));
 -- CREATE TABLE `viewer_numericalscorevalues` (
 --   `id` int(11) NOT NULL AUTO_INCREMENT,
 -- ) ENGINE=InnoDB AUTO_INCREMENT=3405 DEFAULT CHARSET=latin1; */
--- XXX SELECT setval('viewer_numericalscorevalues_id_seq', (SELECT MAX(id) FROM viewer_numericalscorevalues));
+SELECT setval('viewer_numericalscorevalues_id_seq', (SELECT MAX(id) FROM viewer_numericalscorevalues));
 
 -- CREATE TABLE `viewer_project` (
 --   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -350,17 +375,17 @@ SELECT setval('viewer_protein_id_seq', (SELECT MAX(id) FROM viewer_protein));
 -- CREATE TABLE `viewer_scoredescription` (
 --   `id` int(11) NOT NULL AUTO_INCREMENT,
 -- ) ENGINE=InnoDB AUTO_INCREMENT=205 DEFAULT CHARSET=latin1; */
--- XXX SELECT setval('viewer_scoredescription_id_seq', (SELECT MAX(id) FROM viewer_scoredescription));
+SELECT setval('viewer_scoredescription_id_seq', (SELECT MAX(id) FROM viewer_scoredescription));
 
 -- CREATE TABLE `viewer_sessionproject` (
 --   `id` int(11) NOT NULL AUTO_INCREMENT,
 -- ) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=latin1; */
---- XXX SELECT setval('viewer_sessionproject_id_seq', (SELECT MAX(id) FROM viewer_sessionproject));
+SELECT setval('viewer_sessionproject_id_seq', (SELECT MAX(id) FROM viewer_sessionproject));
 
 -- CREATE TABLE `viewer_snapshot` (
 --   `id` int(11) NOT NULL AUTO_INCREMENT,
 -- ) ENGINE=InnoDB AUTO_INCREMENT=68 DEFAULT CHARSET=latin1; */
--- XXX SELECT setval('viewer_snapshot_id_seq', (SELECT MAX(id) FROM viewer_snapshot));
+SELECT setval('viewer_snapshot_id_seq', (SELECT MAX(id) FROM viewer_snapshot));
 
 -- CREATE TABLE `viewer_target` (
 --   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -375,4 +400,4 @@ SELECT setval('viewer_target_project_id_id_seq', (SELECT MAX(id) FROM viewer_tar
 -- CREATE TABLE `viewer_textscorevalues` (
 --   `id` int(11) NOT NULL AUTO_INCREMENT,
 -- ) ENGINE=InnoDB AUTO_INCREMENT=9627 DEFAULT CHARSET=latin1; */
--- XXX SELECT setval('viewer_textscorevalues_id_seq', (SELECT MAX(id) FROM viewer_textscorevalues));
+SELECT setval('viewer_textscorevalues_id_seq', (SELECT MAX(id) FROM viewer_textscorevalues));
