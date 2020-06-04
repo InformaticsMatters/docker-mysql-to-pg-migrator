@@ -15,27 +15,45 @@
 # 2. Create a dump of data files in tab separated format (and separate ddl files)
 #     docker exec -i mysql-5-7-30 sh -c 'mysqldump
 #         --compatible=postgres mysql -T/var/lib/mysql-files -uroot -p"1234"'
-# 3. Copy files from mysql-files to the sql /import
-# 4. Set up database credentials in userpass
+# 3. Copy files from mysql-files to the sql /import directory in the form of a tgz file with name IMPORTFILE.
+# 4. Set database parameters
 # 5. Run this script.
 #
 
 CHARSET="utf-8" #your current database charset
-DATADIR="/import/sql"
-#DATADIR="/home/duncan/Documents/dev/InfoMat/MySQLdatabasemigration/script/sql2020-06-03"
+IMPORTDIR="/import"
+#IMPORTDIR="/home/duncan/Documents/dev/InfoMat/MySQLdatabasemigration/script"
+IMPORTFILE="fragalysis-prod-dump.tgz"
 DATABASE=$POSTGRESQL_DATABASE
+DATADIR="$IMPORTDIR/sql"
 
 export PGPASSWORD=$POSTGRESQL_PASSWORD
 
 echo "Initial Checks"
 
-# Create Process Base directories if they don't exist
-if [ ! -d $DATADIR ]; then
+# Abort if import directory does not exist
+if [ ! -d $IMPORTDIR ]; then
     echo "Import directory must be set with expected output from mysqldump command"
     echo "mysqldump --compatible=postgres mysql -T/var/lib/mysql-files -<user> -p<pwrd>"
     echo "content of mysql-files directory"
     exit 1
 fi
+
+# Abort if input file does not exist
+
+if [ ! -f $IMPORTDIR/$IMPORTFILE ]; then
+    echo "No import data tar file is found on $IMPORTDIR. Expecting a file of name $IMPORTFILE"
+    exit 1
+fi
+
+if [ -d $DATADIR ]; then
+    rm -r $DATADIR
+fi
+
+# Unzip TAR file.
+echo "Unzip $IMPORTFILE to $DATADIR"
+mkdir $DATADIR
+tar -xf $IMPORTDIR/$IMPORTFILE -C $DATADIR
 
 # tmp_tab does not exist in the new database - remove from the list of tables to load
 echo "tmp_tab does not exist in the new database - remove from the list of tables to load"
@@ -43,7 +61,7 @@ mv $DATADIR/tmp_tab.txt $DATADIR/tmp_tab.rej
 
 # Scoring_viewscene has two columns switched in the new database - load separately
 echo "scoring_viewscene has two columns switched in the new database - load separately"
-mv $DATADIR/scoring_viewscene.txt $DATADIR/scoring_viewscene.rej
+mv $DATADIR/scoring_viewscene.txt $DATADIR/scoring_viewscene.bak
 
 echo "Initial Checks OK"
 
@@ -166,7 +184,7 @@ fi
 
 #  Load scoring_viewscene_tmp table.
 
-mv $DATADIR/scoring_viewscene.rej $DATADIR/scoring_viewscene.txt
+mv $DATADIR/scoring_viewscene.bak $DATADIR/scoring_viewscene.txt
 read lines filename <<< $(wc -l $DATADIR/scoring_viewscene.txt)
 echo "lines=$lines filename=$filename"
 

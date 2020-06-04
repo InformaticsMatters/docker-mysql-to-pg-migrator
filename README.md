@@ -2,8 +2,12 @@
 A container image to migrate MySQL data into PostgreSQL.
 
 This container expects a volume to be mounted at `/import`
-that contains the exported MySQL data. The `docker-entrypoint`
-will use this data and then employ `psql` to import the data into
+that contains the exported MySQL data in the format of a tgz file. The file is expected to ba called:
+```
+fragalysis-prod-dump.tgz
+```
+
+The `docker-entrypoint` will use this data and then employ `psql` to import the data into
 the PostgreSQL database using the following environment variables: -
 
 - `POSTGRESQL_USER`
@@ -11,6 +15,13 @@ the PostgreSQL database using the following environment variables: -
 - `POSTGRESQL_HOST`
 - `POSTGRESQL_PORT`
 - `POSTGRESQL_DATABASE`
+
+To obtain the input data:
+- Identify mysql export directory with: mysql> SHOW VARIABLES LIKE "secure_file_priv";
+- Create a dump of data files in tab separated format (and separate ddl files) as follows:
+```
+mysqldump --compatible=postgres mysql -T/var/lib/mysql-files -uroot -p"<password>"
+```
 
 For deployment see our peer [Ansible] repository.
 
