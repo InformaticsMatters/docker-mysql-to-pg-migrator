@@ -41,11 +41,17 @@ fi
 echo "tmp_tab does not exist in the new database - remove from the list of tables to load"
 mv $DATADIR/tmp_tab.txt $DATADIR/tmp_tab.rej
 
+# Scoring_viewscene has two columns switched in the new database - load separately
+echo "scoring_viewscene has two columns switched in the new database - load separately"
+mv $DATADIR/scoring_viewscene.txt $DATADIR/scoring_viewscene.rej
+
 echo "Initial Checks OK"
 
+#
 #  Remove constraints if they exist.
+#
 
-echo "Adjust Tables (incl. sequence information)"
+echo "Pre-load adjustments - Remove Constraints"
 
 psql \
     -X \
@@ -124,7 +130,141 @@ for file in $DATADIR/*.txt; do
     rm /tmp/$TABLE.export.tmp /tmp/$TABLE.export.tmp.out
 done
 
-#  Update sequence and anything else required if needed.
+#
+#  Specific changes for the scoring_viewscene table to switch two columns round.
+#
+echo "Load of scoring_viewscene starting"
+
+#  Create scoring_viewscene_tmp table.
+
+echo "Loading data from $TABLE"
+
+psql \
+    -X \
+    -U $POSTGRESQL_USER \
+    -h $POSTGRESQL_HOST \
+    -p $POSTGRESQL_PORT \
+    --echo-all \
+    --set AUTOCOMMIT=on \
+    --set ON_ERROR_STOP=on \
+    -c "drop table if exists scoring_viewscene_tmp; \
+        CREATE table scoring_viewscene_tmp ( \
+          id int4 NOT NULL,  \
+          uuid bpchar(32) NOT NULL, \
+          title varchar(200) NOT NULL, \
+          scene text NOT NULL, \
+          created timestamp NOT NULL, \
+          modified timestamp NOT NULL, \
+          user_id_id int4 NULL, \
+          snapshot_id int4 NULL);" \
+    $DATABASE
+
+if [ $? -ne 0 ]; then
+    echo "Creation of scoring_viewscene_tmp failed, fault:" 1>&2
+    exit $?
+fi
+
+#  Load scoring_viewscene_tmp table.
+
+mv $DATADIR/scoring_viewscene.rej $DATADIR/scoring_viewscene.txt
+read lines filename <<< $(wc -l $DATADIR/scoring_viewscene.txt)
+echo "lines=$lines filename=$filename"
+
+echo "preparing scoring_viewscene"
+
+#replace carriage return
+sed 's/\r/\\r/g' $DATADIR/scoring_viewscene.txt > /tmp/scoring_viewscene.export.tmp
+
+#cleanup non-printable and wrong sequences for current charset
+iconv -t $CHARSET -f $CHARSET -c < /tmp/scoring_viewscene.export.tmp > /tmp/scoring_viewscene.export.tmp.out
+
+echo "Deleting data from scoring_viewscene (only reload)"
+
+#  For testing
+
+psql \
+    -X \
+    -U $POSTGRESQL_USER \
+    -h $POSTGRESQL_HOST \
+    -p $POSTGRESQL_PORT \
+    --echo-all \
+    --set AUTOCOMMIT=on \
+    --set ON_ERROR_STOP=on \
+    -c "delete from scoring_viewscene;" \
+    $DATABASE
+
+if [ $? -ne 0 ]; then
+    echo "delete data failed, fault:" 1>&2
+    exit $?
+fi
+
+#  psql $DBNAME -c "copy $TABLE from '/tmp/$TABLE.export.tmp.out'"
+
+echo "Loading data into scoring_viewscene_tmp"
+
+psql \
+    -X \
+    -U $POSTGRESQL_USER \
+    -h $POSTGRESQL_HOST \
+    -p $POSTGRESQL_PORT \
+    --echo-all \
+    --set AUTOCOMMIT=on \
+    --set ON_ERROR_STOP=on \
+    -c "\COPY scoring_viewscene_tmp from '/tmp/scoring_viewscene.export.tmp.out';" \
+    $DATABASE
+
+if [ $? -ne 0 ]; then
+    echo "load data failed, fault:" 1>&2
+    exit $?
+fi
+
+#clean up
+rm /tmp/scoring_viewscene.export.tmp /tmp/scoring_viewscene.export.tmp.out
+
+#  Load scoring_viewscene from scoring_viewscene_tmp table.
+
+echo "Loading data into scoring_viewscene from scoring_viewscene_tmp"
+
+psql \
+    -X \
+    -U $POSTGRESQL_USER \
+    -h $POSTGRESQL_HOST \
+    -p $POSTGRESQL_PORT \
+    --echo-all \
+    --set AUTOCOMMIT=on \
+    --set ON_ERROR_STOP=on \
+    -c "insert into scoring_viewscene (id, uuid, title, scene, created, modified, snapshot_id, user_id_id) \
+        select id, uuid, title, scene, created, modified, user_id_id, snapshot_id from scoring_viewscene_tmp;;" \
+    $DATABASE
+
+if [ $? -ne 0 ]; then
+    echo "load data failed, fault:" 1>&2
+    exit $?
+fi
+
+#  Drop scoring_viewscene_tmp table.
+
+echo "Drop scoring_viewscene_tmp"
+
+psql \
+    -X \
+    -U $POSTGRESQL_USER \
+    -h $POSTGRESQL_HOST \
+    -p $POSTGRESQL_PORT \
+    --echo-all \
+    --set AUTOCOMMIT=on \
+    --set ON_ERROR_STOP=on \
+    -c "Drop table scoring_viewscene_tmp;" \
+    $DATABASE
+
+if [ $? -ne 0 ]; then
+    echo "Drop table failed, fault:" 1>&2
+    exit $?
+fi
+
+#
+#  Add constraints, Update sequence and anything else required.
+#
 
 echo "Adjust Tables (incl. sequence information)"
 
