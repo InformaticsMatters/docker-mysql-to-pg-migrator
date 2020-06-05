@@ -168,7 +168,7 @@ psql \
     -c "drop table if exists scoring_viewscene_tmp; \
         CREATE table scoring_viewscene_tmp ( \
           id int4 NOT NULL,  \
-          uuid bpchar(32) NOT NULL, \
+          uuid uuid NOT NULL, \
           title varchar(200) NOT NULL, \
           scene text NOT NULL, \
           created timestamp NOT NULL, \
