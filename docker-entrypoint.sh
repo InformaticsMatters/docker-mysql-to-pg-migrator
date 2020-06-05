@@ -252,33 +252,13 @@ psql \
     --set AUTOCOMMIT=on \
     --set ON_ERROR_STOP=on \
     -c "insert into scoring_viewscene (id, uuid, title, scene, created, modified, snapshot_id, user_id_id) \
-        select id, uuid, title, scene, created, modified, user_id_id, snapshot_id from scoring_viewscene_tmp;;" \
+        select id, uuid, title, scene, created, modified, snapshot_id, user_id_id from scoring_viewscene_tmp;" \
     $DATABASE
 
 if [ $? -ne 0 ]; then
     echo "load data failed, fault:" 1>&2
     exit $?
 fi
-
-#  Drop scoring_viewscene_tmp table.
-
-#echo "Drop scoring_viewscene_tmp"
-#
-#psql \
-#    -X \
-#    -U $POSTGRESQL_USER \
-#    -h $POSTGRESQL_HOST \
-#    -p $POSTGRESQL_PORT \
-#    --echo-all \
-#    --set AUTOCOMMIT=on \
-#    --set ON_ERROR_STOP=on \
-#    -c "Drop table scoring_viewscene_tmp;" \
-#    $DATABASE
-#
-#if [ $? -ne 0 ]; then
-#    echo "Drop table failed, fault:" 1>&2
-#    exit $?
-#fi
 
 #
 #  Add constraints, Update sequence and anything else required.

@@ -401,3 +401,6 @@ SELECT setval('viewer_target_project_id_id_seq', (SELECT MAX(id) FROM viewer_tar
 --   `id` int(11) NOT NULL AUTO_INCREMENT,
 -- ) ENGINE=InnoDB AUTO_INCREMENT=9627 DEFAULT CHARSET=latin1; */
 SELECT setval('viewer_textscorevalues_id_seq', (SELECT MAX(id) FROM viewer_textscorevalues));
+
+-- Drop scoring_viewscene_tmp table.
+DROP TABLE IF EXISTS scoring_viewscene_tmp;
